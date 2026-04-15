@@ -31,7 +31,13 @@ export function MeetingList({ upcoming, past }: { upcoming: MeetingItem[]; past:
   useEffect(() => {
     async function loadSlots() {
       if (!selectedMeeting) return;
-      const response = await fetch(`/api/slots/${selectedMeeting.eventSlug}?date=${format(date, "yyyy-MM-dd")}&timezone=${timezone}&meetingId=${selectedMeeting.id}`);
+
+      const searchParams = new URLSearchParams({
+        date: format(date, "yyyy-MM-dd"),
+        timezone,
+        meetingId: selectedMeeting.id
+      });
+      const response = await fetch(`/api/slots/${selectedMeeting.eventSlug}?${searchParams.toString()}`);
       const data = await response.json();
       setSlots(data.slots ?? []);
     }
@@ -71,7 +77,7 @@ export function MeetingList({ upcoming, past }: { upcoming: MeetingItem[]; past:
                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                   <div>
                     <p className="text-lg font-semibold tracking-tight">{meeting.eventTitle}</p>
-                    <p className="mt-1 text-sm text-[var(--muted)]">{meeting.name} • {meeting.email}</p>
+                    <p className="mt-1 text-sm text-[var(--muted)]">{meeting.name} - {meeting.email}</p>
                     <p className="mt-1 text-sm text-[var(--muted)]">{format(new Date(meeting.startLabel), "PPP p")}</p>
                   </div>
                   <div className="flex flex-col gap-2 sm:flex-row">
@@ -114,7 +120,7 @@ export function MeetingList({ upcoming, past }: { upcoming: MeetingItem[]; past:
             {past.map((meeting) => (
               <div key={meeting.id} className="rounded-2xl border border-[var(--border)] bg-white/85 p-4 shadow-sm">
                 <p className="text-lg font-semibold tracking-tight">{meeting.eventTitle}</p>
-                <p className="mt-1 text-sm text-[var(--muted)]">{meeting.name} • {meeting.email}</p>
+                <p className="mt-1 text-sm text-[var(--muted)]">{meeting.name} - {meeting.email}</p>
                 <p className="mt-1 text-sm text-[var(--muted)]">{format(new Date(meeting.startLabel), "PPP p")}</p>
               </div>
             ))}

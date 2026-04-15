@@ -1,4 +1,4 @@
-import { set } from "date-fns";
+import { parseISO } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
 import { getAppSnapshot } from "@/lib/db";
 import { generateSlots } from "@/lib/scheduler";
@@ -15,6 +15,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: "date query parameter is required." }, { status: 400 });
     }
 
+    const selectedDate = parseISO(dateParam);
     const snapshot = await getAppSnapshot();
     const eventType = snapshot.eventTypes.find((item) => item.slug === slug);
 
@@ -23,15 +24,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     const availabilities = snapshot.availabilities.filter((item) => item.userId === eventType.userId);
-    const overrides = snapshot.overrides.filter(
-      (item) =>
-        item.userId === eventType.userId &&
-        item.date.getTime() === set(new Date(dateParam), { hours: 0, minutes: 0, seconds: 0, milliseconds: 0 }).getTime()
-    );
-    const meetings = snapshot.meetings.filter((item) => item.eventTypeId === eventType.id && item.status === "scheduled");
+    const overrides = snapshot.overrides.filter((item) => item.userId === eventType.userId);
+    const meetings = snapshot.meetings.filter((item) => item.eventType.userId === eventType.userId && item.status === "scheduled");
 
     const slots = generateSlots({
-      date: new Date(dateParam),
+      date: selectedDate,
       timezone,
       eventType,
       availabilities,

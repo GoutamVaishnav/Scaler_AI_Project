@@ -9,7 +9,7 @@ export function isDatabaseUnavailableError(error: unknown) {
   }
 
   const message = error instanceof Error ? error.message : String(error);
-  return /can't reach database server|database connection|connect database server|ecconnrefused|enotfound|timeout/i.test(message);
+  return /can't reach database server|database connection|connect database server|econnrefused|enotfound|timeout/i.test(message);
 }
 
 export function getDatabaseErrorMessage(error: unknown) {

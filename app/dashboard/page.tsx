@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { DemoModeBanner } from "@/components/demo-mode-banner";
 import { getAppSnapshot } from "@/lib/db";
-import { Badge, Card, SectionHeader } from "@/components/ui";
+import { Badge, Card } from "@/components/ui";
 import { minutesToLabel } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -139,7 +139,7 @@ export default async function DashboardPage() {
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="text-lg font-semibold tracking-tight text-white">{nextMeeting.eventType.title}</p>
-                  <p className="mt-1 text-sm text-white/72">{nextMeeting.name} • {nextMeeting.email}</p>
+                  <p className="mt-1 text-sm text-white/72">{nextMeeting.name} - {nextMeeting.email}</p>
                 </div>
                 <span className="inline-flex rounded-full bg-white/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-white">
                   Live
@@ -195,7 +195,7 @@ export default async function DashboardPage() {
 
                   <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <p className="text-sm text-[var(--muted)]">
-                      Buffer: {eventType.bufferBefore} min before • {eventType.bufferAfter} min after
+                      Buffer: {eventType.bufferBefore} min before - {eventType.bufferAfter} min after
                     </p>
                     <Link
                       href={`/book/${eventType.slug}`}
@@ -236,7 +236,7 @@ export default async function DashboardPage() {
                       Scheduled
                     </div>
                   </div>
-                  <p className="mt-2 text-sm text-[var(--muted)]">{meeting.name} • {meeting.email}</p>
+                  <p className="mt-2 text-sm text-[var(--muted)]">{meeting.name} - {meeting.email}</p>
                   <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
                     {new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(meeting.startTime)}
                   </p>

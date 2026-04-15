@@ -21,13 +21,15 @@ type OverrideBlock = {
 
 export function AvailabilityForm({
   initialBlocks,
-  initialOverrides
+  initialOverrides,
+  initialTimezone
 }: {
   initialBlocks: AvailabilityBlock[];
   initialOverrides: OverrideBlock[];
+  initialTimezone: string;
 }) {
   const { pushToast } = useToast();
-  const [timezone, setTimezone] = useState("Asia/Kolkata");
+  const [timezone, setTimezone] = useState(initialTimezone);
   const [blocks, setBlocks] = useState<AvailabilityBlock[]>(initialBlocks.length ? initialBlocks : [{ dayOfWeek: 1, startTime: "09:00", endTime: "17:00", scheduleName: "Default" }]);
   const [overrides, setOverrides] = useState(initialOverrides);
   const [overrideDate, setOverrideDate] = useState("");

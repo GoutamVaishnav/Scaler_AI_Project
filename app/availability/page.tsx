@@ -29,6 +29,7 @@ export default async function AvailabilityPage() {
             startTime: override.startTime,
             endTime: override.endTime
           }))}
+          initialTimezone={blocks[0]?.timezone ?? snapshot.user.defaultTimezone}
         />
       </Card>
     </div>

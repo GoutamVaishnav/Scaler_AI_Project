@@ -30,7 +30,11 @@ export function BookingPageClient({
 
   useEffect(() => {
     async function loadSlots() {
-      const response = await fetch(`/api/slots/${eventType.slug}?date=${format(selectedDate, "yyyy-MM-dd")}&timezone=${timezone}`);
+      const searchParams = new URLSearchParams({
+        date: format(selectedDate, "yyyy-MM-dd"),
+        timezone
+      });
+      const response = await fetch(`/api/slots/${eventType.slug}?${searchParams.toString()}`);
       const data = await response.json();
       setSlots(data.slots ?? []);
       setSelectedTime("");

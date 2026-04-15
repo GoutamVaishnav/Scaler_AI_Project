@@ -1,4 +1,4 @@
-import { set } from "date-fns";
+import { parseISO, set } from "date-fns";
 import { NextResponse } from "next/server";
 import { getDefaultUser, getWriteUnavailableMessage, isDatabaseUnavailableError } from "@/lib/db";
 import { prisma } from "@/lib/prisma";
@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     const user = await getDefaultUser();
     const body = await request.json();
     const payload = overrideAvailabilitySchema.parse(body);
-    const rawDate = new Date(payload.date);
+    const rawDate = parseISO(payload.date);
     const date = set(rawDate, { hours: 0, minutes: 0, seconds: 0, milliseconds: 0 });
 
     const override = await prisma.overrideAvailability.create({
