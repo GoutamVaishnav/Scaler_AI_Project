@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MeetingStatus {
+  scheduled
+  cancelled
+}
+
+model User {
+  id                     String                 @id @default(cuid())
+  name                   String
+  email                  String                 @unique
+  defaultTimezone        String                 @default("Asia/Kolkata")
+  eventTypes             EventType[]
+  availabilities         Availability[]
+  overrideAvailabilities OverrideAvailability[]
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
+}
+
+model EventType {
+  id              String    @id @default(cuid())
+  title           String
+  duration        Int
+  slug            String    @unique
+  userId          String
+  scheduleName    String?   @default("Default")
+  bufferBefore    Int       @default(0)
+  bufferAfter     Int       @default(0)
+  customQuestions Json?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  meetings        Meeting[]
+}
+
+model Availability {
+  id           String   @id @default(cuid())
+  dayOfWeek    Int
+  startTime    String
+  endTime      String
+  timezone     String
+  scheduleName String   @default("Default")
+  userId       String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, scheduleName, dayOfWeek])
+}
+
+model OverrideAvailability {
+  id        String   @id @default(cuid())
+  date      DateTime
+  startTime String
+  endTime   String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
+}
+
+model Meeting {
+  id            String        @id @default(cuid())
+  eventTypeId   String
+  name          String
+  email         String
+  customAnswers Json?
+  date          DateTime
+  startTime     DateTime
+  endTime       DateTime
+  status        MeetingStatus @default(scheduled)
+  bufferBefore  Int           @default(0)
+  bufferAfter   Int           @default(0)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  eventType     EventType     @relation(fields: [eventTypeId], references: [id], onDelete: Cascade)
+
+  @@index([eventTypeId, date])
+  @@index([startTime, endTime, status])
+}
