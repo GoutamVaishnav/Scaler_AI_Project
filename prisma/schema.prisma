@@ -7,21 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum MeetingStatus {
-  scheduled
-  cancelled
-}
-
 model User {
   id                     String                 @id @default(cuid())
   name                   String
   email                  String                 @unique
   defaultTimezone        String                 @default("Asia/Kolkata")
-  eventTypes             EventType[]
-  availabilities         Availability[]
-  overrideAvailabilities OverrideAvailability[]
   createdAt              DateTime               @default(now())
   updatedAt              DateTime               @updatedAt
+  availabilities         Availability[]
+  eventTypes             EventType[]
+  overrideAvailabilities OverrideAvailability[]
 }
 
 model EventType {
@@ -86,4 +81,9 @@ model Meeting {
 
   @@index([eventTypeId, date])
   @@index([startTime, endTime, status])
+}
+
+enum MeetingStatus {
+  scheduled
+  cancelled
 }
