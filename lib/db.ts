@@ -3,6 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { DEFAULT_USER_EMAIL } from "@/lib/constants";
 import { createDemoData } from "@/lib/demo-data";
 
+const DEFAULT_USER_NAME = "ScheduleFlow User";
+const DEFAULT_USER_TIMEZONE = "Asia/Kolkata";
+
 export function isDatabaseUnavailableError(error: unknown) {
   if (error instanceof Prisma.PrismaClientInitializationError) {
     return true;
@@ -21,15 +24,15 @@ export function getDatabaseErrorMessage(error: unknown) {
 }
 
 export async function getDefaultUser() {
-  const user = await prisma.user.findUnique({
-    where: { email: DEFAULT_USER_EMAIL }
+  return prisma.user.upsert({
+    where: { email: DEFAULT_USER_EMAIL },
+    update: {},
+    create: {
+      name: DEFAULT_USER_NAME,
+      email: DEFAULT_USER_EMAIL,
+      defaultTimezone: DEFAULT_USER_TIMEZONE
+    }
   });
-
-  if (!user) {
-    throw new Error("Default user not found. Run prisma db seed first.");
-  }
-
-  return user;
 }
 
 export async function getAppSnapshot() {
